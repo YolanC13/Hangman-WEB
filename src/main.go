@@ -1,71 +1,43 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	hangman "hangman/Internals"
 	"math/rand"
-	"os"
+	"net/http"
 	"slices"
-	"strconv"
 	"strings"
-	"time"
-
-	"github.com/fatih/color"
+	"text/template"
 )
 
-func main() {
-	hangman.Letters = &[]string{}
-	//hangman.PressF11()
-	hangman.ClearScreen()
-
-	fichier := "words.txt"
-	hangman.FileImportedPtr = &fichier
-	args := os.Args[1:]
-	if len(args) == 1 {
-		fichier = args[0]
-	}
-
-	if !hangman.FileExists(fichier) {
-		fmt.Println("ERREUR: Le fichier " + fichier + " n'existe pas.")
-		return
-	}
-
-	*hangman.WordListPtr = hangman.LoadFile(fichier)
-	MainMenuDisplay()
+type UserInfo struct {
+	Username   *string
+	WordStreak *int
 }
 
-func InitializeHangman(text string) {
-	hangman.ClearScreen()
-	HangmanAsciiPrinter(*hangman.PlayerLives)
-	hangman.NewLine(2)
-	fmt.Print("Mot à deviner : ")
-	for i := 0; i < len(*hangman.Letters); i++ {
-		fmt.Print(string((*hangman.Letters)[i]))
-	}
-	hangman.NewLine(1)
-	for j := 0; j < len(*hangman.Letters); j++ {
-		if (*hangman.Letters)[j] == "_" {
-			break
-		} else {
-			if j == len(*hangman.Letters)-1 {
-				hangman.DisplayText(hangman.DisplayTextOptions{
-					TextToPrint: "Tu as gagné !",
-					FgColor:     color.FgGreen,
-				})
-				hangman.DisplayText(hangman.DisplayTextOptions{
-					TextToPrint: "Nombre de vies restantes : " + fmt.Sprint(*hangman.PlayerLives),
-				})
-				hangman.GetInput()
-				MainMenuDisplay()
-				return
-			}
-		}
-	}
-	getLetter(true)
+type GameVariables struct {
+	PlayerLives int
+	Word        *[]string
+	Letters     *string
+	UsedLetters []string
+	HangmanChar []string
+	Winner      *bool
+	PlayerScore int
+	WordStreak  int
+}
+
+type Leaderboard struct {
+	Users *[]string
+}
+
+func main() {
+	fichier := "words.txt"
+	*hangman.WordListPtr = hangman.LoadTextFile(fichier)
+	InitialiseServer()
 }
 
 func InitializeVariables(text string) {
+	hangman.Characters = &hangman.HangmanChar
 	*hangman.PlayerLives = 9
 	for i := 0; i < len(text); i++ {
 		if text[i] == ' ' {
@@ -76,6 +48,7 @@ func InitializeVariables(text string) {
 			*hangman.Letters = append(*hangman.Letters, "_")
 		}
 	}
+	*hangman.Characters = hangman.HangmanChar
 
 	//AJOUTE DES LETTRES ALEATOIREMENT
 	if len(*hangman.Characters) > 9 {
@@ -100,52 +73,6 @@ func InitializeVariables(text string) {
 		}
 		hangman.UsedLetters = append(hangman.UsedLetters, (*hangman.Letters)[x])
 	}
-	InitializeHangman(text)
-}
-
-func getLetter(x bool) {
-
-	//DEBUG
-	/*fmt.Println(hangman.Characters)
-	fmt.Println(hangman.Letters)
-	fmt.Println(hangman.UsedLetters)*/
-
-	if x {
-		hangman.NewLine(1)
-		hangman.BoxStrings([]string{"Choisit une lettre"})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "/!\\ Tu as " + fmt.Sprint(*hangman.PlayerLives) + " vie /!\\",
-			FgColor:     color.FgRed,
-		})
-		if len(hangman.UsedLetters) > 0 {
-			hangman.NewLine(1)
-			fmt.Printf("Lettres utilisées : ")
-			for i := 0; i < len(hangman.UsedLetters); i++ {
-				fmt.Printf(hangman.UsedLetters[i] + " ")
-			}
-			fmt.Printf("\n")
-		}
-		hangman.NewLine(1)
-		hangman.DisplayLine()
-	}
-	fmt.Print("Entrez une lettre: ")
-	input := hangman.GetInput()
-	if input == "" || !IsLetter(input) {
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Veuillez entrer seulement des lettres",
-			FgColor:     color.FgRed,
-		})
-		getLetter(false)
-	} else if len(input) != 1 {
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Vous avez tenté de rentrer plus d'une lettre, vous perdez 2 vies",
-			FgColor:     color.FgRed,
-		})
-		*hangman.PlayerLives -= 2
-		getLetter(false)
-	} else {
-		checkLetter(strings.ToLower(input))
-	}
 }
 
 func checkLetter(letter string) {
@@ -157,54 +84,9 @@ func checkLetter(letter string) {
 		}
 	}
 	if !foundLetter {
-		if slices.Contains(hangman.UsedLetters, letter) {
-			hangman.DisplayText(hangman.DisplayTextOptions{
-				TextToPrint: "Vous avez déja tenté de rentrer cette lettre, vous perdez 1 vie",
-				FgColor:     color.FgRed,
-			})
-			hangman.GetInput()
-		}
 		*hangman.PlayerLives -= 1
 	}
 	hangman.UsedLetters = append(hangman.UsedLetters, letter)
-	PrintHangman()
-}
-
-func PrintHangman() {
-	hangman.ClearScreen()
-	HangmanAsciiPrinter(*hangman.PlayerLives)
-	hangman.NewLine(2)
-	fmt.Print("Mot à deviner : ")
-	if *hangman.PlayerLives > 0 {
-		for i := 0; i < len(*hangman.Letters); i++ {
-			fmt.Print(string((*hangman.Letters)[i]))
-		}
-		hangman.NewLine(1)
-		for j := 0; j < len(*hangman.Letters); j++ {
-			if (*hangman.Letters)[j] == "_" {
-				break
-			} else {
-				if j == len(*hangman.Letters)-1 {
-					hangman.NewLine(2)
-					hangman.DisplayText(hangman.DisplayTextOptions{
-						TextToPrint: "Tu as gagné !",
-						FgColor:     color.FgGreen,
-					})
-					hangman.DisplayText(hangman.DisplayTextOptions{
-						TextToPrint: "Nombre de vies restantes : " + fmt.Sprint(*hangman.PlayerLives),
-					})
-					hangman.NewLine(2)
-					hangman.DisplayText(hangman.DisplayTextOptions{
-						TextToPrint: "Appuyez pour continuer",
-					})
-					hangman.GetInput()
-					MainMenuDisplay()
-					return
-				}
-			}
-		}
-		getLetter(true)
-	}
 }
 
 func IsLetter(s string) bool {
@@ -216,153 +98,163 @@ func IsLetter(s string) bool {
 	return true
 }
 
-func HangmanAsciiPrinter(lives int) {
-
-	fmt.Println(hangman.ASCIIArts["Hangman"+strconv.Itoa(lives)])
-	switch lives {
-	case 0:
-		hangman.ClearScreen()
-
-		hangman.NewLine(2)
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Tu as perdu !",
-			FgColor:     color.FgRed,
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "LE MOT ÉTAIT : " + strings.Join(*hangman.Characters, ""),
-		})
-		hangman.GetInput()
-		MainMenuDisplay()
-	}
-}
-
-func MainMenuDisplay() {
-	hangman.ClearScreen()
-	MainMenuIntro()
-	hangman.NewLine(3)
-	hangman.DisplayText(hangman.DisplayTextOptions{
-		TextToPrint: "1. Jouer",
-		IsCentered:  true,
-	})
-	hangman.DisplayText(hangman.DisplayTextOptions{
-		TextToPrint: "2. Ajouter un mot",
-		IsCentered:  true,
-	})
-	hangman.DisplayText(hangman.DisplayTextOptions{
-		TextToPrint: "3. Quitter",
-		IsCentered:  true,
-	})
-	hangman.NewLine(2)
-	fmt.Print("Votre choix: ")
-	input := hangman.GetInput()
-	switch input {
-	case "1":
-		if len(*hangman.WordListPtr) > 0 {
-			hangman.AsciiArtsInit()
-			hangman.Letters = &[]string{}
-			hangman.HangmanChar = []string{}
-			hangman.UsedLetters = []string{}
-			InitializeVariables((*hangman.WordListPtr)[rand.Intn(len(*hangman.WordListPtr))])
-		} else {
-			fmt.Println("Pas de mots trouvés dans le fichier")
-			hangman.GetInput()
-			AddWord()
-		}
-	case "2":
-		AddWord()
-	case "3":
-		hangman.ClearScreen()
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Merci d'avoir joué!",
-			IsCentered:  true,
-		})
-		time.Sleep(2 * time.Second)
-		os.Exit(3)
-	default:
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Veuillez entrer un chiffre entre 1 et 3",
-			FgColor:     color.FgRed,
-		})
-		time.Sleep(2 * time.Second)
-		MainMenuDisplay()
-	}
-}
-
-func MainMenuIntro() {
-	hangman.NewLine(3)
-	width, _ := hangman.SizeTest()
-	for i := width; i > width/2; i -= 2 {
-		time.Sleep(40_000_000 * time.Nanosecond)
-		hangman.ClearScreen()
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + "             ___    ___    _  _     ___    _   _  ",
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + "    o O O   | _ \\  | __|  | \\| |   |   \\  | | | | ",
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + "   o        |  _/  | _|   | .` |   | |) | | |_| | ",
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + "  TS__[O]  _|_|_   |___|  |_|\\_|   |___/   \\___/  ",
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + " {======||\"\"\"\"\"\"||\"\"\"\"\"\"||\"\"\"\"\"\"|_|\"\"\"\"\"\"||\"\"\"\"\"|",
-		})
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: strings.Repeat(" ", i/2) + "./o--000' `-0-0-' `-0-0-' `-0-0-' `-0-0-' `-0-0-'",
-		})
-	}
-}
-
-func AddWord() {
-	//MERCI CHAT GPT
-	hangman.ClearScreen()
-
-	file, err := os.OpenFile(*hangman.FileImportedPtr, os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
+func InitialiseServer() {
+	temp, errTemp := template.ParseGlob("htmlStuff/*.html")
+	if errTemp != nil {
+		fmt.Printf("Error: %v\n", errTemp)
 		return
 	}
-	defer file.Close()
 
-	r := bufio.NewReader(file)
-	words := []string{}
-	for {
-		line, _, err := r.ReadLine()
-		if len(line) > 0 {
-			//fmt.Printf("ReadLine: %q\n", line)
-			words = append(words, string(line))
-		}
-		if err != nil {
-			break
-		}
-	}
-	fmt.Println("écrivez le mot à ajouter à la liste:")
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	word := scanner.Text()
-	if IsLetter(word) {
-		words = append(words, word+"\n")
-		w := bufio.NewWriter(file)
-		for _, word := range words {
-			fmt.Fprintln(w, word)
-		}
-		w.Flush()
-
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Mot ajouté à la liste",
-			FgColor:     color.FgGreen,
-		})
-	} else {
-		hangman.DisplayText(hangman.DisplayTextOptions{
-			TextToPrint: "Caractères non autorisés",
-			FgColor:     color.FgRed,
-		})
+	UserInfo := UserInfo{
+		Username:   new(string),
+		WordStreak: new(int),
 	}
 
-	hangman.NewLine(1)
-	fmt.Println("Appuyez pour continuer")
-	hangman.GetInput()
-	MainMenuDisplay()
+	//Menu principal
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/mainMenu", http.StatusSeeOther)
+	})
+
+	http.HandleFunc("/mainMenu", func(w http.ResponseWriter, r *http.Request) {
+		temp.ExecuteTemplate(w, "mainMenu", nil)
+	})
+
+	http.HandleFunc("/mainMenu/newGame", func(w http.ResponseWriter, r *http.Request) {
+		ResetScore()
+		temp.ExecuteTemplate(w, "newGame", nil)
+	})
+
+	//Jeu
+	http.HandleFunc("/game", func(w http.ResponseWriter, r *http.Request) {
+		gameVars := GameVariables{
+			PlayerLives: *hangman.PlayerLives,
+			Word:        hangman.Characters,
+			Letters:     new(string),
+			UsedLetters: hangman.UsedLetters,
+			HangmanChar: hangman.HangmanChar,
+			PlayerScore: *hangman.PlayerScorePtr,
+			WordStreak:  *hangman.WordStreakPtr,
+		}
+
+		for i := 0; i < len(*hangman.Letters); i++ {
+			*gameVars.Letters += (*hangman.Letters)[i]
+			*gameVars.Letters += " "
+		}
+
+		if *hangman.PlayerLives == 0 {
+			http.Redirect(w, r, "/game/resultat", http.StatusSeeOther)
+		} else {
+			for j := 0; j < len(*hangman.Letters); j++ {
+				if (*hangman.Letters)[j] == "_" {
+					break
+				} else {
+					if j == len(*hangman.Letters)-1 {
+						http.Redirect(w, r, "/game/resultat", http.StatusSeeOther)
+					}
+				}
+			}
+		}
+
+		temp.ExecuteTemplate(w, "game", gameVars)
+	})
+
+	http.HandleFunc("/game/initialisation", func(w http.ResponseWriter, r *http.Request) {
+		ResetVariables()
+		InitializeVariables((*hangman.WordListPtr)[rand.Intn(len(*hangman.WordListPtr))])
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+	})
+
+	http.HandleFunc("/game/treatment", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			r.ParseForm()
+			var x string = ""
+			if len(hangman.HangmanChar) > 1 {
+				for i := 0; i < len(hangman.HangmanChar); i++ {
+					x += hangman.HangmanChar[i]
+				}
+			}
+
+			if len(r.FormValue("letter")) == 1 {
+				checkLetter(r.FormValue("letter"))
+			} else if r.FormValue("letter") == x {
+				copy(*hangman.Letters, hangman.HangmanChar)
+			} else {
+				*hangman.PlayerLives -= 2
+				hangman.UsedLetters = append(hangman.UsedLetters, r.FormValue("letter"))
+			}
+			http.Redirect(w, r, "/game", http.StatusSeeOther)
+		}
+	})
+
+	http.HandleFunc("/game/resultat", func(w http.ResponseWriter, r *http.Request) {
+		gameVars := GameVariables{
+			PlayerLives: *hangman.PlayerLives,
+			Word:        hangman.Characters,
+			UsedLetters: hangman.UsedLetters,
+			HangmanChar: hangman.HangmanChar,
+			Winner:      hangman.Winner,
+			PlayerScore: *new(int),
+			WordStreak:  *hangman.WordStreakPtr,
+		}
+
+		if *hangman.PlayerLives <= 0 {
+			*hangman.Winner = false
+		} else {
+			*hangman.Winner = true
+
+			//Calcul du Word Streak
+			*hangman.WordStreakPtr += 1
+			gameVars.WordStreak = *hangman.WordStreakPtr
+
+			//Calcul du score
+			for i := 0; i < len(*hangman.Characters); i++ {
+				*hangman.PlayerScorePtr += 1 * (len(*hangman.Characters) - i) * 10
+				if *hangman.WordStreakPtr != 0 {
+					*hangman.PlayerScorePtr += 5 * *hangman.WordStreakPtr
+				}
+			}
+			gameVars.PlayerScore = *hangman.PlayerScorePtr
+
+			*UserInfo.WordStreak += 1
+		}
+
+		gameVars.Winner = hangman.Winner
+		temp.ExecuteTemplate(w, "resultat", gameVars)
+	})
+
+	//Leaderboard
+	http.HandleFunc("/leaderboard", func(w http.ResponseWriter, r *http.Request) {
+		Leaderboard := Leaderboard{
+			Users: &[]string{},
+		}
+
+		for i := 0; i < len(hangman.ReadFileAndReturn()); i++ {
+			ligne := hangman.ReadFileAndReturn()
+			mots := strings.Fields(strings.Join(ligne, " "))
+
+			*Leaderboard.Users = append(*Leaderboard.Users, mots[i]+" "+mots[i+1])
+		}
+
+		temp.ExecuteTemplate(w, "leaderboard", Leaderboard)
+	})
+
+	//Serveur
+	http.Handle("/htmlStuff/", http.StripPrefix("/htmlStuff/", http.FileServer(http.Dir("./htmlStuff"))))
+	http.ListenAndServe("localhost:8080", nil)
+}
+
+func ResetVariables() {
+	*hangman.PlayerLives = 9
+	hangman.UsedLetters = []string{}
+	hangman.HangmanChar = []string{}
+	hangman.Letters = &[]string{}
+	hangman.Characters = &[]string{}
+	hangman.WordListPtr = &[]string{}
+	fichier := "words.txt"
+	*hangman.WordListPtr = hangman.LoadTextFile(fichier)
+}
+
+func ResetScore() {
+	*hangman.PlayerScorePtr = 0
+	*hangman.WordStreakPtr = 0
 }

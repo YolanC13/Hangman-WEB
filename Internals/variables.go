@@ -24,6 +24,15 @@ var WordListPtr = &WordList
 var fileImported string
 var FileImportedPtr = &fileImported
 
+var PlayerScore = 0
+var PlayerScorePtr = &PlayerScore
+
+var WordStrk = 0
+var WordStreakPtr = &WordStrk
+
+var isWinning bool = false
+var Winner = &isWinning
+
 func AsciiArtsInit() {
 	// Initialise ASCIIArts
 	*ASCIIArtsPtr = make(map[string]string)

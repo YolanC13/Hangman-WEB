@@ -1,0 +1,29 @@
+{{define "leaderboard"}}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendu | Classement</title>
+    <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
+</head>
+<body>
+    <h1>Tableau des Scores</h1>
+    <table>
+        <tr>
+            <td>Pseudonyme</td>
+            <td>Score</td>
+        </tr>
+        {{range .Users}}
+        <tr>
+            <td>{{.}}</td>
+        </tr>
+        {{end}}
+    </table>
+    <form action="/mainMenu" method="post">
+        <button type="Menu">Retourner au menu principal</button><br />
+    </form>
+    
+</body>
+</html>
+{{end}}

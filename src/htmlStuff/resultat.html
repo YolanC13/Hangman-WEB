@@ -1,0 +1,27 @@
+{{define "resultat"}}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendu | Résultat</title>
+    <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
+</head>
+<body>
+    {{if .Winner}}
+        <h1>Dommage, vous avez perdu...</h1>
+    {{else}}
+        <h1>Bravo ! Vous avez gagné !</h1>
+    {{end}}
+    <h2>Le mot était : {{.Word}}</h2>
+    <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
+    <h2>Score : {{.PlayerScore}}</h2>
+    <form action="/game/initialisation" method="post">
+        <button type="Rejouer">Prochain mot</button><br />
+    </form>
+    <form action="/mainMenu" method="post">
+        <button type="Menu">Retourner au menu principal</button><br />
+    </form>
+</body>
+</html>
+{{end}}

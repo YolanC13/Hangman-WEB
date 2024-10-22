@@ -9,4 +9,4 @@ Comment lancer le jeu:
 Le fichier contenant la liste des mots peut etre modifié directement depuis le menu principal du jeu. Vous pouvez néanmoins le trouver dans le dossier "src" sous le nom de "words.txt". Il est possible d'importer des fichiers text personnalisés.
 
 Repository Github du projet:
-https://github.com/YolanC13/Hangman
+https://github.com/YolanC13/Hangman-WEB
