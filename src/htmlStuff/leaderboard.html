@@ -8,19 +8,27 @@
     <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
 </head>
 <body>
-    <h1>Tableau des Scores</h1>
-    <table>
-        <tr>
-            <td>Pseudonyme</td>
-            <td>Score</td>
-        </tr>
-        {{range .Users}}
-        <tr>
-            <td>{{.}}</td>
-        </tr>
-        {{end}}
-    </table>
-    <form action="/mainMenu" method="post">
+    <h1 style="text-align: center;">Tableau des Scores</h1>
+    <table style="margin: 0 auto;">
+        <thead>
+            <tr>
+                <th>Pseudonyme</th>
+                <th>Score</th>
+                <th>Mots trouvés</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Users}}
+            <tr>
+                <td>{{.Username}}</td>
+                <td>{{.Score}}</td>
+                <td>{{.WordStreak}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table><br />
+    
+    <form action="/mainMenu" method="post" style="text-align: center;">
         <button type="Menu">Retourner au menu principal</button><br />
     </form>
     

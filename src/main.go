@@ -3,15 +3,18 @@ package main
 import (
 	"fmt"
 	hangman "hangman/Internals"
+	"log"
 	"math/rand"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 	"text/template"
 )
 
-type UserInfo struct {
+type User struct {
 	Username   *string
+	Score      *int
 	WordStreak *int
 }
 
@@ -21,14 +24,15 @@ type GameVariables struct {
 	Letters     *string
 	UsedLetters []string
 	HangmanChar []string
-	Winner      *bool
 	PlayerScore int
 	WordStreak  int
 }
 
 type Leaderboard struct {
-	Users *[]string
+	Users []User
 }
+
+var userInfo = User{}
 
 func main() {
 	fichier := "words.txt"
@@ -105,7 +109,7 @@ func InitialiseServer() {
 		return
 	}
 
-	UserInfo := UserInfo{
+	UserInfo := User{
 		Username:   new(string),
 		WordStreak: new(int),
 	}
@@ -119,9 +123,9 @@ func InitialiseServer() {
 		temp.ExecuteTemplate(w, "mainMenu", nil)
 	})
 
-	http.HandleFunc("/mainMenu/newGame", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/mainMenu/userForm", func(w http.ResponseWriter, r *http.Request) {
 		ResetScore()
-		temp.ExecuteTemplate(w, "newGame", nil)
+		temp.ExecuteTemplate(w, "userForm", nil)
 	})
 
 	//Jeu
@@ -141,7 +145,7 @@ func InitialiseServer() {
 			*gameVars.Letters += " "
 		}
 
-		if *hangman.PlayerLives == 0 {
+		if *hangman.PlayerLives < 1 {
 			http.Redirect(w, r, "/game/resultat", http.StatusSeeOther)
 		} else {
 			for j := 0; j < len(*hangman.Letters); j++ {
@@ -156,6 +160,16 @@ func InitialiseServer() {
 		}
 
 		temp.ExecuteTemplate(w, "game", gameVars)
+	})
+
+	http.HandleFunc("/game/initialisation/first", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			r.ParseForm()
+			*UserInfo.Username = r.FormValue("pseudo")
+			ResetVariables()
+			InitializeVariables((*hangman.WordListPtr)[rand.Intn(len(*hangman.WordListPtr))])
+			http.Redirect(w, r, "/game", http.StatusSeeOther)
+		}
 	})
 
 	http.HandleFunc("/game/initialisation", func(w http.ResponseWriter, r *http.Request) {
@@ -185,62 +199,128 @@ func InitialiseServer() {
 			http.Redirect(w, r, "/game", http.StatusSeeOther)
 		}
 	})
+	http.HandleFunc("/game/replay/first", func(w http.ResponseWriter, r *http.Request) {
+		err := hangman.AddScoreToFile(*userInfo.Username, *userInfo.Score, *userInfo.WordStreak, "leaderboardStat.txt")
+		if err != nil {
+			log.Printf("Erreur lors de l'ajout du score au fichier leaderboard: %v", err)
+		}
+	})
 
 	http.HandleFunc("/game/resultat", func(w http.ResponseWriter, r *http.Request) {
 		gameVars := GameVariables{
 			PlayerLives: *hangman.PlayerLives,
 			Word:        hangman.Characters,
 			UsedLetters: hangman.UsedLetters,
+			Letters:     new(string),
 			HangmanChar: hangman.HangmanChar,
-			Winner:      hangman.Winner,
-			PlayerScore: *new(int),
+			PlayerScore: *hangman.PlayerScorePtr,
 			WordStreak:  *hangman.WordStreakPtr,
 		}
 
-		if *hangman.PlayerLives <= 0 {
-			*hangman.Winner = false
-		} else {
-			*hangman.Winner = true
+		for i := 0; i < len(gameVars.HangmanChar); i++ {
+			*gameVars.Letters += (gameVars.HangmanChar)[i]
+		}
 
-			//Calcul du Word Streak
+		userInfo := User{
+			Username:   UserInfo.Username,
+			WordStreak: UserInfo.WordStreak,
+			Score:      hangman.PlayerScorePtr,
+		}
+
+		if *hangman.PlayerLives > 0 {
+			// Augmente la streak de victoires
 			*hangman.WordStreakPtr += 1
 			gameVars.WordStreak = *hangman.WordStreakPtr
 
-			//Calcul du score
+			// Calcul du score basé sur le mot
 			for i := 0; i < len(*hangman.Characters); i++ {
-				*hangman.PlayerScorePtr += 1 * (len(*hangman.Characters) - i) * 10
-				if *hangman.WordStreakPtr != 0 {
-					*hangman.PlayerScorePtr += 5 * *hangman.WordStreakPtr
-				}
+				*hangman.PlayerScorePtr += 10 * (len(*hangman.Characters) - i)
 			}
+
+			// Ajoute un bonus pour la série de victoires
+			if *hangman.WordStreakPtr > 0 {
+				*hangman.PlayerScorePtr += 5 * *hangman.WordStreakPtr
+			}
+
 			gameVars.PlayerScore = *hangman.PlayerScorePtr
 
+			// Met à jour les informations utilisateur
 			*UserInfo.WordStreak += 1
+
+		} else {
+			// Le joueur a perdu, enregistre le score dans le leaderboard
+			err := hangman.AddScoreToFile(*userInfo.Username, *userInfo.Score, *userInfo.WordStreak, "leaderboardStat.txt")
+			if err != nil {
+				log.Printf("Erreur lors de l'ajout du score au fichier leaderboard: %v", err)
+			}
+
+			// Réinitialise la série de victoires après la défaite
+			*hangman.WordStreakPtr = 0
+			*UserInfo.WordStreak = 0
 		}
 
-		gameVars.Winner = hangman.Winner
-		temp.ExecuteTemplate(w, "resultat", gameVars)
+		// Exécute le template avec les variables du jeu
+		err := temp.ExecuteTemplate(w, "resultat", gameVars)
+		if err != nil {
+			http.Error(w, "Erreur lors de l'exécution du template", http.StatusInternalServerError)
+		}
 	})
 
 	//Leaderboard
 	http.HandleFunc("/leaderboard", func(w http.ResponseWriter, r *http.Request) {
+		// Créer un leaderboard vide
 		Leaderboard := Leaderboard{
-			Users: &[]string{},
+			Users: []User{}, // Plus besoin d'utiliser un pointeur ici
 		}
 
-		for i := 0; i < len(hangman.ReadFileAndReturn()); i++ {
-			ligne := hangman.ReadFileAndReturn()
-			mots := strings.Fields(strings.Join(ligne, " "))
+		// Lire toutes les lignes une seule fois
+		lignes := hangman.ReadFileAndReturn()
 
-			*Leaderboard.Users = append(*Leaderboard.Users, mots[i]+" "+mots[i+1])
+		// Parcourir chaque ligne
+		for _, ligne := range lignes {
+			// Séparer les champs par des espaces
+			parts := strings.Fields(ligne)
+			if len(parts) < 3 {
+				// S'il n'y a pas assez d'éléments dans la ligne, ignorer
+				fmt.Println("Ligne mal formatée :", ligne)
+				continue
+			}
+
+			// Extraire les champs user, score et streak
+			user := parts[0]
+			scoreStr := parts[1]
+			streakStr := parts[2]
+
+			// Convertir les scores de string à int
+			score, err := strconv.Atoi(scoreStr)
+			if err != nil {
+				fmt.Printf("Erreur lors de la conversion du score pour %s: %v\n", user, err)
+				continue
+			}
+			streak, err := strconv.Atoi(streakStr)
+			if err != nil {
+				fmt.Printf("Erreur lors de la conversion du streak pour %s: %v\n", user, err)
+				continue
+			}
+
+			// Ajouter l'utilisateur au leaderboard
+			Leaderboard.Users = append(Leaderboard.Users, User{
+				Username:   &user,
+				Score:      &score,
+				WordStreak: &streak,
+			})
 		}
 
-		temp.ExecuteTemplate(w, "leaderboard", Leaderboard)
+		// Exécuter le template et afficher le leaderboard
+		err := temp.ExecuteTemplate(w, "leaderboard", Leaderboard)
+		if err != nil {
+			http.Error(w, "Erreur lors de l'exécution du template", http.StatusInternalServerError)
+		}
 	})
 
 	//Serveur
 	http.Handle("/htmlStuff/", http.StripPrefix("/htmlStuff/", http.FileServer(http.Dir("./htmlStuff"))))
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe("0.0.0.0:8080", nil)
 }
 
 func ResetVariables() {

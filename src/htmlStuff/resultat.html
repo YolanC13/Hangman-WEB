@@ -8,20 +8,34 @@
     <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
 </head>
 <body>
-    {{if .Winner}}
+    {{if lt .PlayerLives 1}}
         <h1>Dommage, vous avez perdu...</h1>
+        <h2>Le mot était : {{.Letters}}</h2>
+        <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
+        <h2>Score final: {{.PlayerScore}}</h2>
+        <p>Ce score est enregistré dans le tableau des Scores</p>
+        <form action="/game/initialisation/replay" method="post">
+            <button type="Rejouer">Rejouer</button><br />
+        </form>
+        <form action="/leaderboard" method="post">
+            <button type="Scores">Tableau des Scores</button><br />
+        </form>
+        <form action="/mainMenu" method="post">
+            <button type="Menu">Retourner au menu principal</button><br />
+        </form>
     {{else}}
         <h1>Bravo ! Vous avez gagné !</h1>
+        <h2>Vies restantes: {{.PlayerLives}}</h2>
+        <h2>Le mot était : {{.Letters}}</h2>
+        <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
+        <h2>Score actuel: {{.PlayerScore}}</h2>
+        <form action="/game/initialisation" method="post">
+            <button type="Rejouer">Prochain mot</button><br />
+        </form>
+        <form action="/mainMenu" method="post">
+            <button type="Menu">Retourner au menu principal</button><br />
+        </form>
     {{end}}
-    <h2>Le mot était : {{.Word}}</h2>
-    <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
-    <h2>Score : {{.PlayerScore}}</h2>
-    <form action="/game/initialisation" method="post">
-        <button type="Rejouer">Prochain mot</button><br />
-    </form>
-    <form action="/mainMenu" method="post">
-        <button type="Menu">Retourner au menu principal</button><br />
-    </form>
 </body>
 </html>
 {{end}}
