@@ -320,7 +320,7 @@ func InitialiseServer() {
 
 	//Serveur
 	http.Handle("/htmlStuff/", http.StripPrefix("/htmlStuff/", http.FileServer(http.Dir("./htmlStuff"))))
-	http.ListenAndServe("0.0.0.0:8080", nil)
+	http.ListenAndServe("localhost:8080", nil)
 }
 
 func ResetVariables() {

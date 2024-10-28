@@ -1,34 +1,42 @@
 {{define "game"}}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendu | Jeu</title>
     <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
 </head>
+
 <body>
+    <div class="parallax">
+        <div class="layerB1" id="layer1"></div>
+        <div class="layerB2" id="layer2"></div>
+        <div class="layerB3" id="layer3"></div>
+    </div>
     {{if eq .PlayerLives 9}}
-        <img src="./htmlStuff/img/pendu_1.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/pendu1.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 8}}
-        <img src="./htmlStuff/img/Pendu_2.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu2.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 7}}
-        <img src="./htmlStuff/img/Pendu_3.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu3.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 6}}
-        <img src="./htmlStuff/img/Pendu_4.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu4.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 5}}
-        <img src="./htmlStuff/img/Pendu_5.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu5.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 4}}
-        <img src="./htmlStuff/img/Pendu_6.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu6.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 3}}
-        <img src="./htmlStuff/img/Pendu_7.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu7.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 2}}
-        <img src="./htmlStuff/img/Pendu_8.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu8.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 1}}
-        <img src="./htmlStuff/img/Pendu_9.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu9.png" alt="Image du pendu" width="200" height="200" />
     {{else if eq .PlayerLives 0}}
-        <img src="./htmlStuff/img/Pendu_10.png" alt="Image du pendu" width="200" height="200"/>
+    <img class="pendu" src="./htmlStuff/img/Pendu10.png" alt="Image du pendu" width="200" height="200" />
     {{end}}
+    <div class="game-content">
     <h2>Mot à trouver</h2>
     <p>{{.Letters}}</p>
     <!-- <p>{{.Word}}</p> -->
@@ -41,6 +49,9 @@
     <p>{{.PlayerLives}}</p>
     <h2>Historique des lettres</h2>
     <p>{{.UsedLetters}}</p>
+    </div>
+    <script src="/htmlStuff/script.js"></script>
 </body>
+
 </html>
 {{end}}

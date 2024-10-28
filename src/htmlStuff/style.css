@@ -1,52 +1,163 @@
-body {
-    text-align: center;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #ff989f;
-    font-family: "Open Sans", sans-serif;
+@font-face {
+    font-family: 'Centurion';
+    src: url('img/The\ Centurion.otf');
 }
 
-button {
-  border: 3px solid #000;
-  align-items: center;
-  background-color: #c20a0a;
-  border-radius: 100px;
-  box-sizing: border-box;
-  color: #ffffff;
-  cursor: pointer;
-  display: inline-flex;
-  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  justify-content: center;
-  line-height: 20px;
-  max-width: 480px;
-  min-height: 40px;
-  min-width: 0px;
-  overflow: hidden;
-  padding: 0px;
-  padding-left: 20px;
-  padding-right: 20px;
-  text-align: center;
-  touch-action: manipulation;
-  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  user-select: none;
-  -webkit-user-select: none;
-  vertical-align: middle;
-  margin: 3px 0;
-}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html {
+    height: 100%;
+    overflow: hidden;
+  }
 
-img {
-    vertical-align: middle; /* Aligne verticalement l'image avec le texte */
-    border: 4px solid #000;
-}
+/* PARALLAX */
 
-input {
-    border: 4px solid #000;
-}
+  .parallax {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .layerB1 {
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    background-size: cover;
+    background-position: center;
 
-table {
+  }
+
+  .layerB2 {
+    position: absolute;
+    width: 132%;
+    height: 149%;
+    top: -25%;
+    left: -25%;
+    background-size: cover;
+    background-position: center;
+    filter: drop-shadow(0px 0px 10px #000);
+ 
+  }
+
+
+  .layerB3 {
+    position: absolute;
+  width: 108%;
+  height: 122%;
+  top: -13%;
+  left: -3%;
+  background-size: cover;
+  background-position: center;
+  filter: drop-shadow(0px 0px 10px #000);
+
+  }
+
+  .layerLogo {
+    position: absolute;
+    width: 80%;
+    height: 100%;
+    bottom: 105px;
+    left: 122px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+  }
+
+  .layerBlur{
+    position: absolute;
+    width: 80%;
+    height: 100%;
+    bottom: 105px;
+    left: 122px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    filter: blur(20px);
+  }
+
+  
+  #layer1 {
+    background-image: url('/htmlStuff/img/background1.jpg'); /* arrière-plan le plus éloigné */
+    z-index: 1;
+  }
+  
+  #layer2 {
+    background-image: url('/htmlStuff/img/castle.png'); /* arrière-plan intermédiaire */
+    z-index: 2;
+  }
+  
+  #layer3 {
+    background-image: url('/htmlStuff/img/dragon.png'); /* arrière-plan le plus proche */
+    z-index: 3;
+  }
+  
+  #layerLogo {
+    background-image: url('/htmlStuff/img/Logo.png'); /* arrière-plan le plus proche */
+    z-index: 2;
+  }
+
+  #layerblur {
+    background-image: url('/htmlStuff/img/Logo.png'); /* arrière-plan le plus proche */
+    z-index: 1;
+  }
+
+  /* BUTTONS */
+
+  .btn-back {
+    z-index: 10;
+    position: absolute;
+    top: 480px;
+    left: 577px;
+    font-size: 35px;
+    color: #582706;
+    font-family: 'Centurion';
+  }
+
+  .btn-back:hover {
+    color: #af2d00;
+  }
+
+  .btn-scoreboard {
+    z-index: 10;
+    position: absolute;
+    top: 545px;
+    left: 550px;
+    font-size: 35px;
+    color: #582706;
+    font-family: 'Centurion';
+  }
+  
+  .btn-scoreboard:hover {
+    color: #af2d00;
+  }
+
+  .btn-leave {
+    z-index: 10;
+    position: absolute;
+    top: 605px;
+    left: 655px;
+    font-size: 35px;
+    color: #582706;
+    font-family: 'Centurion';
+    cursor: pointer;
+  }
+
+  .btn-leave:hover {
+    color: #af2d00;
+  }
+
+/* LEADER BOARD */
+
+  table {
     margin: 0 auto;
     border-collapse: collapse;
     width: 50%;
@@ -55,6 +166,294 @@ table {
 td {
     text-align: center;
     vertical-align: middle;
-    border: 1px solid black;
+    border: 3px solid #582706;
     padding: 10px;
+}
+
+.leader-container {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  width: 100%;
+  font-family: 'Centurion';
+  color: #582706;
+}
+
+/* USER FORM */
+
+.form-container {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  width: 100%;
+  font-family: 'Centurion';
+  color: #582706;
+  justify-content: center;
+  display: flex;
+  text-align: center;
+  font-size: 30px;
+}
+
+.btn-submit {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 10;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 80%;
+  cursor: pointer;
+
+}
+
+.btn-submit button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 25px;
+  width: 250px;
+  height: 60px;
+  z-index: 11;
+  cursor: pointer;
+}
+
+.btn-submit button:hover {
+  color: #af2d00;
+}
+
+/* GAME */
+
+.game-content {
+  position: absolute;
+  z-index: 10;
+  top: 50px;
+  width: 100%;
+  font-family: 'Centurion';
+  color: #582706;
+  text-align: center;
+  font-size: 23px;
+  left: 13%;
+}
+
+.pendu {
+  z-index: 10;
+  position: absolute;
+  top: 25%;
+  left: 30%;
+}
+
+/* Resultat */
+
+.content-res {
+  position: absolute;
+  z-index: 10;
+  top: 0px;
+  width: 100%;
+  font-family: 'Centurion';
+  color: #582706;
+  text-align: center;
+  font-size: 23px;
+}
+
+.btn-replay {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 12;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 70%;
+}
+
+.btn-replay button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 20px;
+  width: 250px;
+  height: 60px;
+  z-index: 15;
+  cursor: pointer;
+}
+
+.btn-replay button:hover {
+  color: #af2d00;
+}
+
+.btn-score {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 11;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 97%;
+}
+
+.btn-score button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 20px;
+  width: 250px;
+  height: 60px;
+  z-index: 15;
+  cursor: pointer;
+}
+
+.btn-score button:hover {
+  color: #af2d00;
+}
+
+.btn-menu {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 10;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 125%;
+}
+
+.btn-menu button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 20px;
+  width: 250px;
+  height: 60px;
+  z-index: 15;
+  cursor: pointer;
+}
+
+.btn-menu button:hover {
+  color: #af2d00;
+}
+
+.btn-replay-win {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 11;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 70%;
+}
+
+.btn-replay-win button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 20px;
+  width: 250px;
+  height: 60px;
+  z-index: 15;
+  cursor: pointer;
+}
+
+.btn-replay-win button:hover {
+  color: #af2d00;
+}
+
+.btn-menu-win {
+  font-size: 30px;
+  color: #582706;
+  font-family: 'Centurion';
+  margin-top: 20px;
+  background-image: url('/htmlStuff/img/h.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 10;
+  position: absolute;
+  width: 285px;
+  height: 195px;
+  left: 40%;
+  top: 97%;
+}
+
+.btn-menu-win button {
+  background-color: transparent;
+  font-family: 'Centurion';
+  color: #582706;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  list-style: none;
+  font-size: 30px;
+  top: 105px;
+  position: absolute;
+  left: 20px;
+  width: 250px;
+  height: 60px;
+  z-index: 15;
+  cursor: pointer;
+}
+
+.btn-menu-win button:hover {
+  color: #af2d00;
 }

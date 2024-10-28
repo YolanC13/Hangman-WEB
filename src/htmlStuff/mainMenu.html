@@ -1,21 +1,32 @@
 {{define "mainMenu"}}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendu | Menu principal</title>
     <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
 </head>
+
 <body>
-    <h1>Pendu</h1>
-    <form action="/mainMenu/userForm" method="post">
-        <button type="Jouer">Jouer</button><br />
-    </form>
-    <form action="/leaderboard" method="post">
-        <button type="Scores">Tableau des Scores</button><br />
-    </form>
-    <button type="Quitter">Quitter</button><br />
+    <div class="parallax">
+        <div class="layerB1" id="layer1"></div>
+        <a href="/mainMenu/userForm">
+            <p class="btn-back">Appuyer pour Jouer !</p>
+        </a>
+        <a href="/leaderboard">
+            <p class="btn-scoreboard">Registre des Honneurs !</p>
+        </a>
+        <p class="btn-leave">Quitter</p>
+        <div class="layerB2" id="layer2"></div>
+        <div class="layerB3" id="layer3"></div>
+        <div class="layerLogo" id="layerLogo"></div>
+        <div class="layerBlur" id="layerblur"></div>
+    </div>
+
+    <script src="/htmlStuff/script.js"></script>
 </body>
+
 </html>
 {{end}}

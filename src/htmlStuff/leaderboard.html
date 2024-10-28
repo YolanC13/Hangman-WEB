@@ -1,37 +1,48 @@
 {{define "leaderboard"}}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendu | Classement</title>
     <link rel="stylesheet" type="text/css" href="/htmlStuff/style.css">
 </head>
+
 <body>
-    <h1 style="text-align: center;">Tableau des Scores</h1>
-    <table style="margin: 0 auto;">
-        <thead>
-            <tr>
-                <th>Pseudonyme</th>
-                <th>Score</th>
-                <th>Mots trouvés</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .Users}}
-            <tr>
-                <td>{{.Username}}</td>
-                <td>{{.Score}}</td>
-                <td>{{.WordStreak}}</td>
-            </tr>
-            {{end}}
-        </tbody>
-    </table><br />
-    
-    <form action="/mainMenu" method="post" style="text-align: center;">
-        <button type="Menu">Retourner au menu principal</button><br />
-    </form>
-    
+    <div class="parallax">
+        <div class="layerB1" id="layer1"></div>
+        <div class="layerB2" id="layer2"></div>
+        <div class="layerB3" id="layer3"></div>
+    </div>
+    <div class="leader-container">
+        <h1 style="text-align: center;">Registre des Honneurs !</h1>
+        <table style="margin: 0 auto;">
+            <thead>
+                <tr>
+                    <th>Pseudonyme</th>
+                    <th>Score</th>
+                    <th>Mots trouvés</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Users}}
+                <tr>
+                    <td>{{.Username}}</td>
+                    <td>{{.Score}}</td>
+                    <td>{{.WordStreak}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table><br />
+
+
+        <a href="/mainMenu">
+            <p class="btn-leave">Retour au Menu !</p>
+        </a>
+        <script src="/htmlStuff/script.js"></script>
+    </div>
 </body>
+
 </html>
 {{end}}
