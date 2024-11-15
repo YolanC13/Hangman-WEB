@@ -39,10 +39,10 @@
     <div class="game-content">
     <h2>Mot à trouver</h2>
     <p>{{.Letters}}</p>
-    <!-- <p>{{.Word}}</p> -->
+    <p>{{.Word}}</p>
     <h2>Choisissez une lettre</h2>
     <form action="/game/treatment" method="post">
-        <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on">
+        <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on" autocomplete="off">
         <button type="submit">Envoyer</button><br />
     </form>
     <h2>Nombre de tentatives restantes</h2>

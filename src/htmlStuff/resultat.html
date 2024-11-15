@@ -16,43 +16,42 @@
         <div class="layerB3" id="layer3"></div>
     </div>
     <div class="content-res">
+        <h1>{{.RandomMsg}}</h1>
         {{if lt .PlayerLives 1}}
-        <h1>Dommage, vous avez perdu...</h1>
-        <h2>Le mot était : {{.Letters}}</h2>
-        <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
-        <h2>Score final: {{.PlayerScore}}</h2>
-        <p>Ce score est enregistré dans le tableau des Scores</p>
-        <form action="/game/initialisation/replay" method="post">
-            <div class="btn-replay">
-                <button type="Rejouer">Rejouer</button><br />
-            </div>
-        </form>
-        <form action="/leaderboard" method="post">
-            <div class="btn-score">
-                <button type="Scores">Tableau des Scores</button><br />
-            </div>
-        </form>
-        <form action="/mainMenu" method="post">
-            <div class="btn-menu">
-                <button type="Menu">Retourner au menu</button><br />
-            </div>
-        </form>
+            <h2>Le mot était : {{.Letters}}</h2>
+            <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
+            <h2>Score final: {{.PlayerScore}}</h2>
+            <p>Ce score est enregistré dans le tableau des Scores</p>
+            <form action="/mainMenu/userForm" method="post">
+                <div class="btn-replay">
+                    <button type="Rejouer">Rejouer</button><br />
+                </div>
+            </form>
+            <form action="/leaderboard" method="post">
+                <div class="btn-score">
+                    <button type="Scores">Tableau des Scores</button><br />
+                </div>
+            </form>
+            <form action="/mainMenu" method="post">
+                <div class="btn-menu">
+                    <button type="Menu">Retourner au menu</button><br />
+                </div>
+            </form>
         {{else}}
-        <h1>Bravo ! Vous avez gagné !</h1>
-        <h2>Vies restantes: {{.PlayerLives}}</h2>
-        <h2>Le mot était : {{.Letters}}</h2>
-        <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
-        <h2>Score actuel: {{.PlayerScore}}</h2>
-        <form action="/game/initialisation" method="post">
-            <div class="btn-replay-win">
-                <button type="Rejouer">Prochain mot</button><br />
-            </div>
-        </form>
-        <form action="/mainMenu" method="post">
-            <div class="btn-menu-win">
-                <button type="Menu">Abandonner</button><br />
-            </div>
-        </form>
+            <h2>Vies restantes: {{.PlayerLives}}</h2>
+            <h2>Le mot était : {{.Letters}}</h2>
+            <p>Nombre de mots trouvés au total: {{.WordStreak}}</p>
+            <h2>Score actuel: {{.PlayerScore}}</h2>
+            <form action="/game/initialisation" method="post">
+                <div class="btn-replay-win">
+                    <button type="Rejouer">Prochain mot</button><br />
+                </div>
+            </form>
+            <form action="/mainMenu" method="post">
+                <div class="btn-menu-win">
+                    <button type="Menu">Abandonner</button><br />
+                </div>
+            </form>
         {{end}}
     </div>
 

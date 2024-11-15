@@ -3,6 +3,11 @@
     src: url('img/The\ Centurion.otf');
 }
 
+@font-face {
+    font-family: 'Ancien';
+    src: url('img/Ancient\ Medium.ttf');
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -175,8 +180,9 @@ td {
   z-index: 10;
   top: 0;
   width: 100%;
-  font-family: 'Centurion';
+  font-family: 'Ancien';
   color: #582706;
+  font-size: 28px;
 }
 
 /* USER FORM */

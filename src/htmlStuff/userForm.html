@@ -18,13 +18,13 @@
     <div class="form-container">
         <form action="/game/initialisation/first" method="post">
             <h1>Entrez un pseudonyme</h1>
-            <input type="text" name="pseudo" placeholder="Pseudo" autofocus="on"><br />
+            <input type="text" name="pseudo" placeholder="Pseudo" autofocus="on" required autocomplete="off"><br />
 
             <h1>Choisissez un mode de Jeu</h1>
             <input type="radio" id="classique" name="gameMode" value="classique" checked>
             <label for="classique">Mode classique</label><br>
-            <input type="radio" id="chronométré" name="gameMode" value="chronométré">
-            <label for="chronométré">Contre la montre (pas encore fonctionnel)</label><br />
+            <input type="radio" id="simplifié" name="gameMode" value="simplifié">
+            <label for="chronométré">Mode simplifié</label><br />
 
             <div class="btn-submit">
                 <button type="submit">Valider</button><br />

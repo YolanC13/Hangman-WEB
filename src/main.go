@@ -22,10 +22,11 @@ type GameVariables struct {
 	PlayerLives int
 	Word        *[]string
 	Letters     *string
-	UsedLetters []string
+	UsedLetters *string
 	HangmanChar []string
 	PlayerScore int
 	WordStreak  int
+	RandomMsg   string
 }
 
 type Leaderboard struct {
@@ -88,7 +89,9 @@ func checkLetter(letter string) {
 		}
 	}
 	if !foundLetter {
-		*hangman.PlayerLives -= 1
+		if !slices.Contains(hangman.UsedLetters, letter) {
+			*hangman.PlayerLives -= 1
+		}
 	}
 	hangman.UsedLetters = append(hangman.UsedLetters, letter)
 }
@@ -124,6 +127,7 @@ func InitialiseServer() {
 	})
 
 	http.HandleFunc("/mainMenu/userForm", func(w http.ResponseWriter, r *http.Request) {
+		ResetVariables()
 		ResetScore()
 		temp.ExecuteTemplate(w, "userForm", nil)
 	})
@@ -134,7 +138,7 @@ func InitialiseServer() {
 			PlayerLives: *hangman.PlayerLives,
 			Word:        hangman.Characters,
 			Letters:     new(string),
-			UsedLetters: hangman.UsedLetters,
+			UsedLetters: new(string),
 			HangmanChar: hangman.HangmanChar,
 			PlayerScore: *hangman.PlayerScorePtr,
 			WordStreak:  *hangman.WordStreakPtr,
@@ -143,6 +147,15 @@ func InitialiseServer() {
 		for i := 0; i < len(*hangman.Letters); i++ {
 			*gameVars.Letters += (*hangman.Letters)[i]
 			*gameVars.Letters += " "
+		}
+
+		if len(hangman.UsedLetters) > 0 {
+			for i := 0; i < len(hangman.UsedLetters)-1; i++ {
+				*gameVars.UsedLetters += (hangman.UsedLetters)[i] + ", "
+			}
+			*gameVars.UsedLetters += (hangman.UsedLetters)[len(hangman.UsedLetters)-1]
+		} else {
+			*gameVars.UsedLetters = "Aucune lettre utilisée"
 		}
 
 		if *hangman.PlayerLives < 1 {
@@ -199,22 +212,17 @@ func InitialiseServer() {
 			http.Redirect(w, r, "/game", http.StatusSeeOther)
 		}
 	})
-	http.HandleFunc("/game/replay/first", func(w http.ResponseWriter, r *http.Request) {
-		err := hangman.AddScoreToFile(*userInfo.Username, *userInfo.Score, *userInfo.WordStreak, "leaderboardStat.txt")
-		if err != nil {
-			log.Printf("Erreur lors de l'ajout du score au fichier leaderboard: %v", err)
-		}
-	})
 
 	http.HandleFunc("/game/resultat", func(w http.ResponseWriter, r *http.Request) {
 		gameVars := GameVariables{
 			PlayerLives: *hangman.PlayerLives,
 			Word:        hangman.Characters,
-			UsedLetters: hangman.UsedLetters,
+			UsedLetters: new(string),
 			Letters:     new(string),
 			HangmanChar: hangman.HangmanChar,
 			PlayerScore: *hangman.PlayerScorePtr,
 			WordStreak:  *hangman.WordStreakPtr,
+			RandomMsg:   "",
 		}
 
 		for i := 0; i < len(gameVars.HangmanChar); i++ {
@@ -227,6 +235,7 @@ func InitialiseServer() {
 			Score:      hangman.PlayerScorePtr,
 		}
 
+		// Le joueur a gagné
 		if *hangman.PlayerLives > 0 {
 			// Augmente la streak de victoires
 			*hangman.WordStreakPtr += 1
@@ -247,16 +256,35 @@ func InitialiseServer() {
 			// Met à jour les informations utilisateur
 			*UserInfo.WordStreak += 1
 
-		} else {
+			// Affiche un message de victoire aléatoire
+			messageList := []string{
+				"Bravo, vous avez gagné !",
+				"Victoire !",
+				"Vous avez gagné !",
+				"Bien joué !",
+			}
+			gameVars.RandomMsg = messageList[rand.Intn(len(messageList))]
+
+		} else { // Le joueur a perdu
 			// Le joueur a perdu, enregistre le score dans le leaderboard
-			err := hangman.AddScoreToFile(*userInfo.Username, *userInfo.Score, *userInfo.WordStreak, "leaderboardStat.txt")
-			if err != nil {
-				log.Printf("Erreur lors de l'ajout du score au fichier leaderboard: %v", err)
+			if userInfo.Username != nil {
+				err := hangman.AddScoreToFile(*userInfo.Username, *userInfo.Score, *userInfo.WordStreak, "leaderboardStat.txt")
+				if err != nil {
+					log.Printf("Erreur lors de l'ajout du score au fichier leaderboard: %v", err)
+				}
 			}
 
 			// Réinitialise la série de victoires après la défaite
 			*hangman.WordStreakPtr = 0
 			*UserInfo.WordStreak = 0
+
+			messageList := []string{
+				"Dommage, vous avez perdu...",
+				"Désolé, vous avez perdu...",
+				"Vous avez perdu...",
+				"Vous ferez mieux la prochaine fois...",
+			}
+			gameVars.RandomMsg = messageList[rand.Intn(len(messageList))]
 		}
 
 		// Exécute le template avec les variables du jeu
@@ -330,8 +358,8 @@ func ResetVariables() {
 	hangman.Letters = &[]string{}
 	hangman.Characters = &[]string{}
 	hangman.WordListPtr = &[]string{}
-	fichier := "words.txt"
-	*hangman.WordListPtr = hangman.LoadTextFile(fichier)
+
+	*hangman.WordListPtr = hangman.LoadTextFile("words.txt")
 }
 
 func ResetScore() {
