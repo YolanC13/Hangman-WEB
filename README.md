@@ -6,9 +6,9 @@ Le Supplice du Pendard est un jeu du pendu sur le thème du fantastique et du Mo
 Johan Daumas et Yolan Chiotti dans le cadre d'un projet à Ynov.
 
 Comment acceder au jeu sur son navigateur: 
-- Il faut lancer l'executable Hangman.exe trouvable dans le dossier "src".
+- Il faut lancer l'executable HangmanWEB.exe trouvable dans le dossier "src" du projet.
 
-Liste des roots:
+Liste des roots du site web:
 
     http://localhost:8080/mainMenu : Menu principal du jeu.
 

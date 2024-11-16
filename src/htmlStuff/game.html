@@ -39,7 +39,7 @@
     <div class="game-content">
     <h2>Mot à trouver</h2>
     <p>{{.Letters}}</p>
-    <p>{{.Word}}</p>
+    <!-- <p>{{.Word}}</p> Debug -->
     <h2>Choisissez une lettre</h2>
     <form action="/game/treatment" method="post">
         <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on" autocomplete="off">
@@ -52,6 +52,5 @@
     </div>
     <script src="/htmlStuff/script.js"></script>
 </body>
-
 </html>
 {{end}}
