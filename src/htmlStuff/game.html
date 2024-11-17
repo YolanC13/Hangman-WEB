@@ -39,23 +39,21 @@
         {{end}}
     </div>
     <div class="game-content">
-        <h2>Mot à trouver</h2>
-        <p>{{.Letters}}</p>
-        <!-- <p>{{.Word}}</p> Debug -->
-        <h2>Choisissez une lettre</h2>
+        <h2>Mot à trouver</h2><br>
+        <h1>{{.Letters}}</h1><br>
+        <!-- <p>{{.Word}}</p><br> Debug -->
+        <h2>Choisissez une lettre</h2><br>
         <form action="/game/treatment" method="post">
             <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on" autocomplete="off">
             <button type="submit">Envoyer</button><br />
-        </form>
+        </form><br>
         <form action="/game/treatment/joker" method="post">
-            <div class="btn-joker">
-                <button type="submit">Joker (-2 vies)</button><br />
-            </div>
-        </form>
-        <h2>Nombre de tentatives restantes</h2>
-        <p>{{.PlayerLives}}</p>
-        <h2>Historique des lettres</h2>
-        <p>{{.UsedLetters}}</p>
+            <button type="submit">Joker (-2 vies)</button><br />
+        </form><br>
+        <h2>Nombre de tentatives restantes</h2><br>
+        <h1>{{.PlayerLives}}</h1><br>
+        <h2>Historique des lettres</h2><br>
+        <h3>{{.UsedLetters}}</h3><br>
     </div>
     <script src="/htmlStuff/script.js"></script>
 </body>
