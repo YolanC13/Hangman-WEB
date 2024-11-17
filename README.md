@@ -7,6 +7,7 @@ Johan Daumas et Yolan Chiotti dans le cadre d'un projet à Ynov.
 
 Comment acceder au jeu sur son navigateur: 
 - Il faut lancer l'executable Launcher.exe trouvable dans le dossier "src" du projet.
+- Accédez à votre navigateur web et entrez l'adresse suivante: http://localhost:8080
 
 Liste des roots du site web:
 
