@@ -105,6 +105,19 @@ func IsLetter(s string) bool {
 	return true
 }
 
+func Joker() {
+	if *hangman.PlayerLives > 0 {
+		for i := 0; i < len(*hangman.Characters); i++ {
+			if (*hangman.Letters)[i] == "_" {
+				(*hangman.Letters)[i] = (*hangman.Characters)[i]
+				break
+			}
+		}
+	}
+
+	hangman.UsedLetters = append(hangman.UsedLetters, "Joker")
+}
+
 func InitialiseServer() {
 	temp, errTemp := template.ParseGlob("htmlStuff/*.html")
 	if errTemp != nil {
@@ -210,6 +223,16 @@ func InitialiseServer() {
 				hangman.UsedLetters = append(hangman.UsedLetters, r.FormValue("letter"))
 			}
 			http.Redirect(w, r, "/game", http.StatusSeeOther)
+		}
+	})
+
+	http.HandleFunc("/game/treatment/joker", func(w http.ResponseWriter, r *http.Request) {
+		*hangman.PlayerLives -= 2
+		if *hangman.PlayerLives > 0 {
+			Joker()
+			http.Redirect(w, r, "/game", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, "/game/resultat", http.StatusSeeOther)
 		}
 	})
 

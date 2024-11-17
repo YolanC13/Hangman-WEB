@@ -160,6 +160,28 @@
     color: #af2d00;
   }
 
+  .btn-joker{
+    background-color: transparent;
+    font-family: 'Centurion';
+    color: #582706;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    list-style: none;
+    font-size: 30px;
+    top: 105px;
+    position: absolute;
+    left: 25px;
+    width: 250px;
+    height: 60px;
+    z-index: 11;
+    cursor: pointer;
+  }
+  
+  .btn-joker button:hover {
+    color: #af2d00;
+  }
+
 /* LEADER BOARD */
 
   table {
@@ -215,7 +237,6 @@ td {
   left: 40%;
   top: 80%;
   cursor: pointer;
-
 }
 
 .btn-submit button {

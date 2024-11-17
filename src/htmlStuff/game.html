@@ -15,40 +15,47 @@
         <div class="layerB2" id="layer2"></div>
         <div class="layerB3" id="layer3"></div>
     </div>
-    {{if eq .PlayerLives 9}}
-    <img class="pendu" src="./htmlStuff/img/pendu1.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 8}}
-    <img class="pendu" src="./htmlStuff/img/Pendu2.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 7}}
-    <img class="pendu" src="./htmlStuff/img/Pendu3.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 6}}
-    <img class="pendu" src="./htmlStuff/img/Pendu4.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 5}}
-    <img class="pendu" src="./htmlStuff/img/Pendu5.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 4}}
-    <img class="pendu" src="./htmlStuff/img/Pendu6.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 3}}
-    <img class="pendu" src="./htmlStuff/img/Pendu7.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 2}}
-    <img class="pendu" src="./htmlStuff/img/Pendu8.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 1}}
-    <img class="pendu" src="./htmlStuff/img/Pendu9.png" alt="Image du pendu" width="200" height="200" />
-    {{else if eq .PlayerLives 0}}
-    <img class="pendu" src="./htmlStuff/img/Pendu10.png" alt="Image du pendu" width="200" height="200" />
-    {{end}}
+    <div class="hangman">
+        {{if eq .PlayerLives 9}}
+        <img class="pendu" src="./htmlStuff/img/pendu1.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 8}}
+        <img class="pendu" src="./htmlStuff/img/Pendu2.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 7}}
+        <img class="pendu" src="./htmlStuff/img/Pendu3.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 6}}
+        <img class="pendu" src="./htmlStuff/img/Pendu4.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 5}}
+        <img class="pendu" src="./htmlStuff/img/Pendu5.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 4}}
+        <img class="pendu" src="./htmlStuff/img/Pendu6.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 3}}
+        <img class="pendu" src="./htmlStuff/img/Pendu7.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 2}}
+        <img class="pendu" src="./htmlStuff/img/Pendu8.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 1}}
+        <img class="pendu" src="./htmlStuff/img/Pendu9.png" alt="Image du pendu" width="200" height="200" />
+        {{else if eq .PlayerLives 0}}
+        <img class="pendu" src="./htmlStuff/img/Pendu10.png" alt="Image du pendu" width="200" height="200" />
+        {{end}}
+    </div>
     <div class="game-content">
-    <h2>Mot à trouver</h2>
-    <p>{{.Letters}}</p>
-    <!-- <p>{{.Word}}</p> Debug -->
-    <h2>Choisissez une lettre</h2>
-    <form action="/game/treatment" method="post">
-        <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on" autocomplete="off">
-        <button type="submit">Envoyer</button><br />
-    </form>
-    <h2>Nombre de tentatives restantes</h2>
-    <p>{{.PlayerLives}}</p>
-    <h2>Historique des lettres</h2>
-    <p>{{.UsedLetters}}</p>
+        <h2>Mot à trouver</h2>
+        <p>{{.Letters}}</p>
+        <!-- <p>{{.Word}}</p> Debug -->
+        <h2>Choisissez une lettre</h2>
+        <form action="/game/treatment" method="post">
+            <input type="text" name="letter" size="1" required pattern="[A-Za-z]+" autofocus="on" autocomplete="off">
+            <button type="submit">Envoyer</button><br />
+        </form>
+        <form action="/game/treatment/joker" method="post">
+            <div class="btn-joker">
+                <button type="submit">Joker (-2 vies)</button><br />
+            </div>
+        </form>
+        <h2>Nombre de tentatives restantes</h2>
+        <p>{{.PlayerLives}}</p>
+        <h2>Historique des lettres</h2>
+        <p>{{.UsedLetters}}</p>
     </div>
     <script src="/htmlStuff/script.js"></script>
 </body>
