@@ -191,6 +191,22 @@ func InitialiseServer() {
 	http.HandleFunc("/game/initialisation/first", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			r.ParseForm()
+
+			//Choix du mode de jeu
+			gamemode := r.FormValue("gamemode")
+
+			var fichier string
+			switch gamemode {
+			case "classique":
+				fichier = "words.txt"
+			case "simplifie":
+				fichier = "easy_words.txt"
+			default:
+				http.Error(w, "Mode de jeu invalide", http.StatusBadRequest)
+				return
+			}
+			*hangman.WordListPtr = hangman.LoadTextFile(fichier)
+
 			*UserInfo.Username = r.FormValue("pseudo")
 			ResetVariables()
 			InitializeVariables((*hangman.WordListPtr)[rand.Intn(len(*hangman.WordListPtr))])
